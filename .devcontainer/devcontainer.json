@@ -1,0 +1,14 @@
+{
+  "name": "Web Proxy (Rammerhead)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "postCreateCommand": "bash scripts/setup.sh",
+  "postAttachCommand": "bash scripts/start.sh",
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": {
+      "label": "Web Proxy",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "hostRequirements": { "cpus": 2 }
+}
