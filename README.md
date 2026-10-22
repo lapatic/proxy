@@ -1,75 +1,30 @@
-# proxy
+# Web Proxy
 
-A browser-based web proxy you run inside a GitHub Codespace. The proxy runs on GitHub's servers, so the sites you open are fetched from there and not from your own machine. It's powered by [Rammerhead](https://github.com/binary-person/rammerhead), which rewrites pages server-side. Cookies, `localStorage`, redirects, POST forms, and WebSockets are all handled, so **logging in to sites works**.
+## How to use it
 
-## Quick start
+### 1. Make a codespace
+Click the green **Code** button, then **Codespaces**, then **Create codespace on main**.
 
-1. Click **Code ▸ Codespaces ▸ Create codespace on main** on this repo.
-2. Wait for the first build. It takes about a minute while it installs the proxy and builds the client files.
-3. The proxy **starts automatically** when the codespace opens. The terminal prints `Open: https://<name>-8080.app.github.dev/`.
-4. Open that link. VS Code may also pop it open for you, or you can use the **Ports** tab, find port 8080 ("Web Proxy"), and click the globe icon.
-5. Type a URL on the Rammerhead page and press **Go**. Sign in to sites as you normally would.
+### 2. Wait
+About 1 minute. Don't touch anything.
 
-If the proxy isn't running (for example after the codespace was stopped and resumed), run:
+### 3. Open the link
+A tab opens by itself. If not, find the link in the terminal that says **Open:** and click it.
 
-```bash
-bash scripts/start.sh      # start (safe to run twice)
-bash scripts/stop.sh       # stop
-tail -f proxy.log          # logs
-```
+### 4. Type a website and hit Go
+Done. Log into stuff like normal.
 
-## How it works
+---
 
-```
-your browser ──https──▶ Codespaces port 8080 ──▶ Rammerhead (Node) ──▶ the real website
-```
+## If it doesn't work
 
-- `.devcontainer/devcontainer.json` creates a Node 20 container, forwards port 8080, runs `scripts/setup.sh` once, and runs `scripts/start.sh` on every attach.
-- `scripts/setup.sh` clones Rammerhead into `rammerhead/` (git-ignored), copies `config.js` into it, and runs `npm install` and `npm run build`.
-- `config.js` is the only configuration. It binds to `0.0.0.0:8080` and builds the rewritten URLs from the host the browser used (`x-forwarded-host`/`x-forwarded-proto`), which is what makes it work behind the Codespaces URL.
-- Rammerhead keeps a server-side session per browser, including cookies and storage. Sessions are kept for 3 days of inactivity, so you stay signed in between visits. Session data lives in `rammerhead/sessions/` inside the codespace.
+- **Blank page or 404?** Type this in the terminal at the bottom, then press Enter:
+  `bash scripts/start.sh`
+- **Logged out?** Use the same Rammerhead page as before. A new session = signed out.
+- **Site is broken?** Open the proxy in a new tab and try again.
 
-## Sign-ins
+## Rules
 
-Logins work because cookies are stored in the proxy session and not in your browser. Simple username/password sites and most OAuth redirects (Google, Microsoft, GitHub, etc.) work. Some caveats:
-
-- Keep using the **same proxy session** (the Rammerhead page remembers it in your browser). A new session means a clean, signed-out browser.
-- **Captchas**: setup upgrades hammerhead and patches two bugs that stopped reCAPTCHA/hCaptcha/Turnstile iframes from loading (`scripts/patch-hammerhead.js`). Already-created codespaces need `rm -rf rammerhead && bash scripts/setup.sh && bash scripts/stop.sh; bash scripts/start.sh` to pick this up. A captcha that loads can still show an image challenge, because Codespaces uses datacenter IPs that Google and Cloudflare distrust.
-- Sites with strict bot or fingerprint checks (some banking sites, Cloudflare challenges such as chatgpt.com, passkeys/WebAuthn) may refuse to sign in. That's a limit of any rewriting proxy.
-- Video-heavy sites and sites that use very new browser APIs can be partly broken.
-
-## Access and security
-
-- By default, Codespaces ports are **private**: only you, signed in to GitHub, can reach the URL. Leave it that way.
-- **No password.** Anyone who can reach the port can create, edit or delete sessions, so keep the Codespaces port private.
-- **Sessions are encrypted at rest.** Session files (cookies, logins) are AES-256-GCM encrypted with a random key in `rammerhead/.session-key`, and file names are an HMAC of the session id, so neither the contents nor the ids can be read from disk. Session ids are still the bearer token in the proxy URL, so don't share those URLs.
-- Whatever you sign in to goes through this codespace. Only use it for accounts you're comfortable with, and don't share the URL.
-
-## Good to know
-
-- **Codespaces limits**: free accounts get a monthly allowance of core-hours and storage. Codespaces stop after 30 minutes idle by default, so stop yours when you're done: <https://github.com/codespaces>. Resuming it restarts the proxy.
-- **Terms**: using Codespaces for general-purpose proxying or VPN-like traffic may conflict with [GitHub's Acceptable Use Policies and Codespaces terms](https://docs.github.com/en/site-policy/github-terms/github-terms-for-additional-products-and-features#codespaces). Light personal use is one thing; heavy traffic or sharing with others is another. You're responsible for how you use it.
-- **Your network's rules**: if you use this at school or work, check their acceptable-use policy first.
-
-## Troubleshooting
-
-| Symptom | Fix |
-| --- | --- |
-| Port 8080 isn't listed or the link 404s | `bash scripts/start.sh` and check `proxy.log` |
-| Blank page after the first build | Reload the tab, and make sure the Ports tab shows 8080 as running |
-| Logged out unexpectedly | Your session expired or was recreated. Sign in again on the same Rammerhead page |
-| Site loops or won't load | Try a fresh session by opening the proxy in a new tab/incognito window |
-| Rammerhead update broke something | `RH_REF=<tag-or-commit> bash scripts/setup.sh` after deleting `rammerhead/` |
-
-## Run it locally (optional)
-
-Needs Node 18+ and git:
-
-```bash
-bash scripts/setup.sh && bash scripts/start.sh
-# open http://localhost:8080
-```
-
-## Credits
-
-Rammerhead by [binary-person](https://github.com/binary-person/rammerhead) (MIT), built on TestCafe's [hammerhead](https://github.com/DevExpress/testcafe-hammerhead) engine. This repo is just the Codespaces packaging and config.
+- Keep the port **Private**. Never share your link.
+- Only log into stuff you're okay with going through this.
+- When you're done, stop your codespace at https://github.com/codespaces so you don't use up your free hours.
