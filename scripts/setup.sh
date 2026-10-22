@@ -10,5 +10,8 @@ fi
 cp config.js rammerhead/config.js
 cd rammerhead
 npm install --no-audit --no-fund
+# Newer hammerhead (pinned so the patch below always matches), then fix captcha support.
+npm install --no-audit --no-fund testcafe-hammerhead@31.7.8
+node ../scripts/patch-hammerhead.js
 npm run build
 echo "Setup complete."

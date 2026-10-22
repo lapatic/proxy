@@ -34,7 +34,8 @@ your browser ──https──▶ Codespaces port 8080 ──▶ Rammerhead (Nod
 Logins work because cookies are stored in the proxy session and not in your browser. Simple username/password sites and most OAuth redirects (Google, Microsoft, GitHub, etc.) work. Some caveats:
 
 - Keep using the **same proxy session** (the Rammerhead page remembers it in your browser). A new session means a clean, signed-out browser.
-- Sites with strict bot or fingerprint checks (some banking sites, Cloudflare challenges, passkeys/WebAuthn) may refuse to sign in. That's a limit of any rewriting proxy.
+- **Captchas**: setup upgrades hammerhead and patches two bugs that stopped reCAPTCHA/hCaptcha/Turnstile iframes from loading (`scripts/patch-hammerhead.js`). Already-created codespaces need `rm -rf rammerhead && bash scripts/setup.sh && bash scripts/stop.sh; bash scripts/start.sh` to pick this up. A captcha that loads can still show an image challenge, because Codespaces uses datacenter IPs that Google and Cloudflare distrust.
+- Sites with strict bot or fingerprint checks (some banking sites, Cloudflare challenges such as chatgpt.com, passkeys/WebAuthn) may refuse to sign in. That's a limit of any rewriting proxy.
 - Video-heavy sites and sites that use very new browser APIs can be partly broken.
 
 ## Access and security
