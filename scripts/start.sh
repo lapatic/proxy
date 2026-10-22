@@ -14,12 +14,6 @@ else
   done
 fi
 
-if [ -n "${PROXY_PASSWORD:-}" ]; then
-  echo "Password: (your PROXY_PASSWORD)"
-elif [ -f rammerhead/.proxy-password ]; then
-  echo "Password: $(cat rammerhead/.proxy-password)"
-fi
-
 if [ -n "${CODESPACE_NAME:-}" ]; then
   echo "Open: https://${CODESPACE_NAME}-8080.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}/"
 else

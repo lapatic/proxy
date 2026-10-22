@@ -41,7 +41,7 @@ Logins work because cookies are stored in the proxy session and not in your brow
 ## Access and security
 
 - By default, Codespaces ports are **private**: only you, signed in to GitHub, can reach the URL. Leave it that way.
-- A **password is always required** to create, edit or delete a proxy session. Set your own with a Codespaces secret named `PROXY_PASSWORD` (GitHub ▸ Settings ▸ Codespaces ▸ Secrets) or `PROXY_PASSWORD=yourpass bash scripts/start.sh`. If you don't, a random one is generated once, saved in `rammerhead/.proxy-password`, and printed by `scripts/start.sh`.
+- **No password.** Anyone who can reach the port can create, edit or delete sessions, so keep the Codespaces port private.
 - **Sessions are encrypted at rest.** Session files (cookies, logins) are AES-256-GCM encrypted with a random key in `rammerhead/.session-key`, and file names are an HMAC of the session id, so neither the contents nor the ids can be read from disk. Session ids are still the bearer token in the proxy URL, so don't share those URLs.
 - Whatever you sign in to goes through this codespace. Only use it for accounts you're comfortable with, and don't share the URL.
 

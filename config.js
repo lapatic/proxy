@@ -19,9 +19,6 @@ function loadOrCreateSecret(name, make) {
         return value;
     }
 }
-// Password for creating/editing/deleting sessions. PROXY_PASSWORD wins; otherwise a random one
-// is generated once and kept in rammerhead/.proxy-password (scripts/start.sh prints it).
-const password = process.env.PROXY_PASSWORD || loadOrCreateSecret('.proxy-password', () => crypto.randomBytes(12).toString('base64url'));
 // Key that encrypts session files at rest. Separate from the password so changing the
 // password does not destroy saved sessions.
 const sessionKey = Buffer.from(loadOrCreateSecret('.session-key', () => crypto.randomBytes(32).toString('hex')), 'hex');
@@ -91,8 +88,8 @@ module.exports = {
         };
     },
 
-    // Always required: PROXY_PASSWORD, or a generated one (see top of file).
-    password,
+    // No password: anyone who can reach the port can create sessions.
+    password: undefined,
 
     // Codespaces' forwarder changes the client IP, so don't pin sessions to one.
     restrictSessionToIP: false,
